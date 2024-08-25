@@ -1,6 +1,8 @@
 package dk.brokso.foodaugust.command;
 
 
+import de.vandermeer.asciitable.AsciiTable;
+import de.vandermeer.asciitable.CWC_LongestLine;
 import dk.brokso.foodaugust.data.Food;
 import dk.brokso.foodaugust.data.Opskrift;
 import dk.brokso.foodaugust.util.Loggable;
@@ -24,9 +26,9 @@ public class MadCommands implements Loggable {
 
         StringBuilder builder = new StringBuilder();
 
-        for (Food food : foods){
+        for (Food food : foods) {
 
-            if (food.getName().toUpperCase().contains(ord.toUpperCase())){
+            if (food.getName().toUpperCase().contains(ord.toUpperCase())) {
                 builder.append(food.getId());
                 builder.append(" ");
                 builder.append(food.getName());
@@ -46,24 +48,24 @@ public class MadCommands implements Loggable {
         int valgtId;
         int gram;
 
-        try{
+        try {
             valgtId = Integer.parseInt(userValg);
             gram = Integer.parseInt(userGram);
-        } catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             System.out.println(String.format("%1s er ikke gyldig", userValg));
             return;
         }
 
         Optional<Food> fundetFood = foods.stream().filter(f -> f.getId() == valgtId).findFirst();
 
-        if(fundetFood.isPresent()){
+        if (fundetFood.isPresent()) {
             Food fundet = fundetFood.get();
             fundet.setGram(gram);
             valgtMadMap.put(fundet.getId(), fundet);
-            System.out.println(String.format("Tilføjet %s gram %s", fundet.getGram() ,fundet.getName()));
+            System.out.println(String.format("Tilføjet %s gram %s", fundet.getGram(), fundet.getName()));
             se();
         } else {
-            System.out.println("Den valgte mad findes ikke (" + userValg + ").") ;
+            System.out.println("Den valgte mad findes ikke (" + userValg + ").");
         }
 
 
@@ -76,5 +78,27 @@ public class MadCommands implements Loggable {
 
         System.out.println(opskrift.toAsciiTable());
 
+    }
+
+    @ShellMethod("protein")
+    public String protein() {
+
+
+        Collections.sort(foods, (o1, o2) -> {
+            return Float.compare(o2.getProteinIn100Gram(), o1.getProteinIn100Gram()); // Descending order
+        });
+
+        AsciiTable table = new AsciiTable();
+        table.addRule();
+        table.addRow("Id", "Navn", "Kalorier", "Protein (g)", "Kulhydrat (g)", "Fedt (g)", "Fiber (g)");
+        table.addRule();
+
+        for (Food food : foods) {
+            table.addRow(food.getId(), food.getName(), food.getKcalIn100Gram(), food.getProteinIn100Gram(), food.getCarbonhydratesIn100Gram(), food.getFatIn100Gram(), food.getDietaryfibreIn100gram());
+            table.addRule();
+
+        }
+        table.getRenderer().setCWC(new CWC_LongestLine());
+        return table.render();
     }
 }

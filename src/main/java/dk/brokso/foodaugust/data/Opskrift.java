@@ -69,12 +69,13 @@ public class Opskrift {
         for (Food food : valgtmad) {
             table.addRow(food.getId(), food.getName(), food.getGram(), food.getTotalCalories(), food.getGramProtein(), food.getGramCarbonhydrates(), food.getGramFat(), food.getGramDietaryfibre());
             table.addRule();
-            table.addRow("Ialt", "", this.opskriftGramValgt, this.opskriftTotalKcal, this.opskriftTotalProtein, this.opskriftTotalCarbonhydrates, this.opskriftTotalFat, this.opskriftTotalDietaryfibre);
-            table.addRule();
-            table.addRow("%", "", "", "", this.opskriftPercentageProtein, this.opskriftPercentageCarbonhydrates, this.opskriftPercentageFat, "");
-            table.addRule();
-
         }
+
+        table.addRow("Ialt", "", this.opskriftGramValgt, this.opskriftTotalKcal, this.opskriftTotalProtein, this.opskriftTotalCarbonhydrates, this.opskriftTotalFat, this.opskriftTotalDietaryfibre);
+        table.addRule();
+        table.addRow("%", "", "", "", this.opskriftPercentageProtein, this.opskriftPercentageCarbonhydrates, this.opskriftPercentageFat, "");
+        table.addRule();
+
         table.getRenderer().setCWC(new CWC_LongestLine());
 
         return table.render();

@@ -52,6 +52,25 @@ public class Food {
 
     }
 
+    public static Food ofAdditional(List<String> foodProps) {
+
+        foodcounter++;
+
+        Food food = new Food();
+
+        food.setId(foodcounter);
+        food.setName(foodProps.get(0));
+        food.setKcalIn100Gram(localParseFloat(foodProps, 1));
+        food.setProteinIn100Gram(localParseFloat(foodProps, 2));
+        food.setCarbonhydratesIn100Gram(localParseFloat(foodProps, 3));
+        food.setDietaryfibreIn100gram(localParseFloat(foodProps, 4));
+        food.setFatIn100Gram(localParseFloat(foodProps, 5));
+
+
+        return food;
+
+    }
+
     private static float localParseFloat(List<String> foodProps, int position) {
         String foodprop = foodProps.get(position);
 

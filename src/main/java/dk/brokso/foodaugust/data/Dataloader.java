@@ -28,6 +28,15 @@ public class Dataloader implements Loggable {
 
         List<Food> foods = new ArrayList<>();
 
+        readCsv(foods);
+        readAdditional(foods);
+
+        logger().info("Antal madvarer loaded: " + foods.size());
+        logger().info("Afslutter dataload");
+        return foods;
+    }
+
+    private static void readCsv(List<Food> foods) {
         try (InputStream inputStream = new ClassPathResource("madvarer.csv").getInputStream();
              BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
 
@@ -45,10 +54,26 @@ public class Dataloader implements Loggable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
-        logger().info("Antal madvarer loaded: " + foods.size());
-        logger().info("Afslutter dataload");
-        return foods;
+    private static void readAdditional(List<Food> foods) {
+        try (InputStream inputStream = new ClassPathResource("meremad.csv").getInputStream();
+             BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+
+            String line = "";
+            line = fileReader.readLine();
+            int i = 0;
+            do {
+                List<String> dataLine = splitLinie(line);
+                if (!hasSkipCondition(dataLine)) {
+                    foods.add(Food.ofAdditional(dataLine));
+                }
+                i++;
+                line = fileReader.readLine();
+            } while ((line != null));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static boolean hasSkipCondition(List<String> dataLine) {

@@ -1,6 +1,8 @@
 package dk.brokso.foodaugust.command;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import de.vandermeer.asciitable.AsciiTable;
 import de.vandermeer.asciitable.CWC_LongestLine;
 import dk.brokso.foodaugust.data.Food;
@@ -9,12 +11,18 @@ import dk.brokso.foodaugust.util.Loggable;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Stream;
 
 @ShellComponent
 public class MadCommands implements Loggable {
 
-    private final List<Food> foods;
+    private List<Food> foods;
     private final Map<Integer, Food> valgtMadMap = new HashMap<>();
 
     private enum MakroType {FIBRE, PROTEIN}
@@ -97,6 +105,7 @@ public class MadCommands implements Loggable {
             System.out.println("Den valgte mad findes ikke (" + userValg + ").");
         }
 
+        se();
 
     }
 
@@ -115,8 +124,99 @@ public class MadCommands implements Loggable {
         Opskrift opskrift = new Opskrift(valgtMadMap.values().stream().toList());
 
         System.out.println(opskrift.toAsciiTable());
+        System.out.println(opskrift.toMaethedsAsciiTable());
 
     }
+
+    @ShellMethod("gem")
+    public void gem(String opskriftnavn) {
+
+        Opskrift opskrift = new Opskrift(valgtMadMap.values().stream().toList());
+
+        // Create a Jackson ObjectMapper with YAML support
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+
+        // Persist to a YAML file
+        try {
+            File file = new File(opskriftnavn + ".yaml");
+            mapper.writeValue(file, opskrift);
+            System.out.println("Recipe saved to" + file.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(5);
+        }
+
+        System.out.println(opskrift.toAsciiTable());
+
+    }
+
+    @ShellMethod("justertil")
+    public void justertil(String antalKcal) {
+
+        int onsketAntalKcal = 0;
+
+        try {
+            onsketAntalKcal = Integer.parseInt(antalKcal);
+            System.out.println(String.format("Onsket antal kcal: %s", onsketAntalKcal));
+        } catch (NumberFormatException e) {
+            System.out.println(String.format("Det indtastede tal er ikke validt %s", onsketAntalKcal));
+            return;
+        }
+
+        if (valgtMadMap.isEmpty()) {
+            System.out.println("Der skal indtastes madvarer før man kan justere kalorier");
+            return;
+        }
+
+        Opskrift opskrift = new Opskrift(valgtMadMap.values().stream().toList());
+        float gammeltotalKcal = opskrift.getOpskriftTotalKcal();
+        float justeringsfactor = (onsketAntalKcal/gammeltotalKcal);
+        System.out.println(String.format("Justeringsfaktor er beregnet til %s", justeringsfactor));
+
+        valgtMadMap.values().forEach(
+
+                food -> {
+                    System.out.println(String.format("%s gram før %s", food.getName(), food.getGram()));
+                    food.setGram((int) (food.getGram() * justeringsfactor));
+                    System.out.println(String.format("%s gram efter %s", food.getName(), food.getGram()));
+                });
+
+        se();
+
+    }
+
+
+    @ShellMethod("seopskrifter")
+    public void seopskrifter() {
+        String libraryPath = ".";
+
+        try (Stream<Path> paths = Files.walk(Paths.get(libraryPath))) {
+            paths.filter(Files::isRegularFile)
+                    .filter(path -> path.toString().endsWith(".yaml"))
+                    .forEach(System.out::println);
+        } catch (IOException e) {
+            System.err.println("An error occurred: " + e.getMessage());
+        }
+    }
+
+    @ShellMethod("hentopskrift")
+    public void hentopskrift(String navn) {
+
+        // Create a Jackson ObjectMapper with YAML support
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+
+        // Persist to a YAML file
+        try {
+            File file = new File(navn + ".yaml");
+            Opskrift opskrift = mapper.readValue(file, Opskrift.class);
+            this.foods = opskrift.getValgtmad();
+            System.out.println("Opskrift " + file.getAbsolutePath() + " læst.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(5);
+        }
+    }
+
 
     @ShellMethod("protein")
     public String protein() {
@@ -136,7 +236,7 @@ public class MadCommands implements Loggable {
 
 
         System.out.println("Indtast navn");
-        food.setName( scanner.nextLine());
+        food.setName(scanner.nextLine());
 
         System.out.println("Indtast kcal pr 1000 gram");
         food.setKcalIn100Gram(Integer.parseInt(scanner.nextLine()));
@@ -144,7 +244,8 @@ public class MadCommands implements Loggable {
         return food.toString();
 
     }
-@ShellMethod("fibre")
+
+    @ShellMethod("fibre")
     public String fibre() {
 
 
@@ -164,8 +265,7 @@ public class MadCommands implements Loggable {
         for (Food food : foods) {
             if (MakroType.FIBRE == type && food.getDietaryfibreIn100gram() > 0 || MakroType.PROTEIN == type && food.getProteinIn100Gram() > 0) {
                 table.addRow(food.getId(), food.getName(), food.getKcalIn100Gram(), food.getProteinIn100Gram(), food.getCarbonhydratesIn100Gram(), food.getFatIn100Gram(), food.getDietaryfibreIn100gram());
-            }
-            else{
+            } else {
                 continue;
             }
             table.addRule();

@@ -25,7 +25,7 @@ public class MadCommands implements Loggable {
     private List<Food> foods;
     private final Map<Integer, Food> valgtMadMap = new HashMap<>();
 
-    private enum MakroType {FIBRE, PROTEIN}
+    private enum MakroType {FIBRE, PROTEIN, FULLNESS}
 
     ;
 
@@ -218,6 +218,17 @@ public class MadCommands implements Loggable {
     }
 
 
+    @ShellMethod("fullness")
+    public String fullness() {
+
+
+        Collections.sort(foods, (o1, o2) -> {
+            return Double.compare(o2.getFullnessFactor(), o1.getFullnessFactor()); // Descending order
+        });
+
+        return foodsAsTable(MakroType.PROTEIN);
+    }
+
     @ShellMethod("protein")
     public String protein() {
 
@@ -259,12 +270,12 @@ public class MadCommands implements Loggable {
     private String foodsAsTable(MakroType type) {
         AsciiTable table = new AsciiTable();
         table.addRule();
-        table.addRow("Id", "Navn", "Kalorier", "Protein (g)", "Kulhydrat (g)", "Fedt (g)", "Fiber (g)");
+        table.addRow("Id", "Navn", "Kalorier", "Protein (g)", "Kulhydrat (g)", "Fedt (g)", "Fiber (g)", "Fullness");
         table.addRule();
 
         for (Food food : foods) {
             if (MakroType.FIBRE == type && food.getDietaryfibreIn100gram() > 0 || MakroType.PROTEIN == type && food.getProteinIn100Gram() > 0) {
-                table.addRow(food.getId(), food.getName(), food.getKcalIn100Gram(), food.getProteinIn100Gram(), food.getCarbonhydratesIn100Gram(), food.getFatIn100Gram(), food.getDietaryfibreIn100gram());
+                table.addRow(food.getId(), food.getName(), food.getKcalIn100Gram(), food.getProteinIn100Gram(), food.getCarbonhydratesIn100Gram(), food.getFatIn100Gram(), food.getDietaryfibreIn100gram(), food.getFullnessFactor());
             } else {
                 continue;
             }

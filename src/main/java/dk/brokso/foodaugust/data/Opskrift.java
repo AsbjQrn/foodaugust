@@ -2,6 +2,7 @@ package dk.brokso.foodaugust.data;
 
 import de.vandermeer.asciitable.AsciiTable;
 import de.vandermeer.asciitable.CWC_LongestLine;
+import dk.brokso.foodaugust.util.Calculator;
 import lombok.Getter;
 
 import java.util.List;
@@ -126,14 +127,11 @@ public class Opskrift {
     public String toMaethedsAsciiTable() {
 
         double kaloriedensitet = this.opskriftTotalKcal / this.opskriftTotalGramValgt;
-        double justertil100gram = this.opskriftTotalGramValgt / 100;
-        double maethedstal = (this.opskriftTotalKcal / this.opskriftTotalGramValgt) * justertil100gram * (this.opskriftTotalProtein * justertil100gram + (this.opskriftTotalDietaryfibre * justertil100gram * 2) - this.opskriftTotalFat * justertil100gram);
-
 
         AsciiTable table = new AsciiTable();
         table.addRule();
         table.addRow("Kaloriedensitet kcal/gram", "slanketal");
-        table.addRow(kaloriedensitet, calculateFullnessFactor());//mæthedstal beregnes til at gælde 100 gra af opskriften - så det er altid er det samme uanset portionsstørrelse
+        table.addRow(kaloriedensitet, Calculator.calculateFullnessFactor(opskriftKiloKalorierpr100Gr, opskriftProteinPr100Gr, opskriftDietaryfibrePr100Gr, opskriftFatPr100Gr));
         table.addRule();
 
         table.getRenderer().setCWC(new CWC_LongestLine());
@@ -142,23 +140,23 @@ public class Opskrift {
 
     }
 
-
-    // Method to calculate the Fullness Factor (FF)
-    public double calculateFullnessFactor() {
-        // Calculate each part of the formula
-        double term1 = 41.7 / Math.pow(opskriftKiloKalorierpr100Gr, 0.7);
-        double term2 = 0.05 * opskriftProteinPr100Gr;
-        double term3 = 6.17E-4 * Math.pow(opskriftDietaryfibrePr100Gr, 3); //6.17E-4 = 6.17 * 10 i minus 4 potens
-        double term4 = -7.25E-6 * Math.pow(opskriftFatPr100Gr, 3);
-        double term5 = 0.617;
-
-        // Sum the terms
-        double fullnessFactor = term1 + term2 + term3 + term4 + term5;
-
-        // Apply the MIN and MAX functions to ensure FF is within the bounds of 0.5 and 5.0
-        fullnessFactor = Math.max(0.5, Math.min(5.0, fullnessFactor));
-
-        return fullnessFactor;
-    }
+//
+//    // Method to calculate the Fullness Factor (FF)
+//    public static double calculateFullnessFactor(double kiloKalorierpr100Gr, double proteinPr100Gr, double dietaryfibrePr100Gr, double fatPr100Gr) {
+//        // Calculate each part of the formula
+//        double term1 = 41.7 / Math.pow(kiloKalorierpr100Gr, 0.7);
+//        double term2 = 0.05 * proteinPr100Gr;
+//        double term3 = 6.17E-4 * Math.pow(dietaryfibrePr100Gr, 3); //6.17E-4 = 6.17 * 10 i minus 4 potens
+//        double term4 = -7.25E-6 * Math.pow(fatPr100Gr, 3);
+//        double term5 = 0.617;
+//
+//        // Sum the terms
+//        double fullnessFactor = term1 + term2 + term3 + term4 + term5;
+//
+//        // Apply the MIN and MAX functions to ensure FF is within the bounds of 0.5 and 5.0
+//        fullnessFactor = Math.max(0.5, Math.min(5.0, fullnessFactor));
+//
+//        return fullnessFactor;
+//    }
 
 }

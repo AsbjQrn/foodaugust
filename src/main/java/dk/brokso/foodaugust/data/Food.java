@@ -1,6 +1,7 @@
 package dk.brokso.foodaugust.data;
 
 
+import dk.brokso.foodaugust.util.Calculator;
 import lombok.Data;
 import lombok.ToString;
 
@@ -18,6 +19,7 @@ public class Food {
     private double fatIn100Gram;
     private double carbonhydratesIn100Gram;
     private double dietaryfibreIn100gram;
+    private double fullnessFactor;
     private int gram;
     private int makronaeringVaegt;
 
@@ -47,6 +49,7 @@ public class Food {
         food.setDietaryfibreIn100gram(localParsedouble(foodProps, 13));
         food.setFatIn100Gram(localParsedouble(foodProps, 14));
 
+        food.setFullnessFactor(Calculator.calculateFullnessFactor(food.getKcalIn100Gram(),  food.getProteinIn100Gram(), food.getDietaryfibreIn100gram(), food.getFatIn100Gram()));
 
         return food;
 
@@ -65,7 +68,7 @@ public class Food {
         food.setCarbonhydratesIn100Gram(localParsedouble(foodProps, 3));
         food.setDietaryfibreIn100gram(localParsedouble(foodProps, 4));
         food.setFatIn100Gram(localParsedouble(foodProps, 5));
-
+        food.setFullnessFactor(Calculator.calculateFullnessFactor(food.getKcalIn100Gram(),  food.getProteinIn100Gram(), food.getDietaryfibreIn100gram(), food.getFatIn100Gram()));
 
         return food;
 
@@ -109,15 +112,5 @@ public class Food {
     public double getGramDietaryfibre(){
         return dietaryfibreIn100gram * gram  * 1/100;
     }
-
-    public double getMakroNaeringsVaegt(){
-        return getGramProtein() + getGramFat() + getGramCarbonhydrates();
-    }
-
-
-
-
-
-
 
 }

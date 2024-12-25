@@ -169,8 +169,8 @@ public class MadCommands implements Loggable {
         }
 
         Opskrift opskrift = new Opskrift(valgtMadMap.values().stream().toList());
-        float gammeltotalKcal = opskrift.getOpskriftTotalKcal();
-        float justeringsfactor = (onsketAntalKcal/gammeltotalKcal);
+        double gammeltotalKcal = opskrift.getOpskriftTotalKcal();
+        double justeringsfactor = (onsketAntalKcal/gammeltotalKcal);
         System.out.println(String.format("Justeringsfaktor er beregnet til %s", justeringsfactor));
 
         valgtMadMap.values().forEach(
@@ -223,7 +223,7 @@ public class MadCommands implements Loggable {
 
 
         Collections.sort(foods, (o1, o2) -> {
-            return Float.compare(o2.getProteinIn100Gram(), o1.getProteinIn100Gram()); // Descending order
+            return Double.compare(o2.getProteinIn100Gram(), o1.getProteinIn100Gram()); // Descending order
         });
 
         return foodsAsTable(MakroType.PROTEIN);
@@ -250,7 +250,7 @@ public class MadCommands implements Loggable {
 
 
         Collections.sort(foods, (o1, o2) -> {
-            return Float.compare(o2.getDietaryfibreIn100gram(), o1.getDietaryfibreIn100gram()); // Descending order
+            return Double.compare(o2.getDietaryfibreIn100gram(), o1.getDietaryfibreIn100gram()); // Descending order
         });
 
         return foodsAsTable(MakroType.FIBRE);

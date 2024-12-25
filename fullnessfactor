@@ -1,0 +1,196 @@
+The formula you've provided is a way to calculate a "Fullness Factor" (FF) based on the nutritional composition of a food item.
+This "Fullness Factor" (FF) quantifies how filling or satisfying a particular food might be based on its caloric content, protein, dietary fiber,
+and fat content.
+
+Here’s how to interpret and use the formula step-by-step:
+
+Formula:
+𝐹𝐹=MAX(0.5,MIN(5.0,41.7/CAL0.7+0.05×PR+6.17×10−4×DF3−7.25×10−6×TF3+0.617))
+FF=MAX(0.5,MIN(5.0,41.7/CAL0.7 +0.05×PR+6.17×10−4 ×DF3 −7.25×10−6 ×TF3 +0.617))
+Components:
+CAL = Total calories per 100g (minimum value of 30)
+PR = Grams of protein per 100g (maximum value of 30)
+DF = Grams of dietary fiber per 100g (maximum value of 12)
+TF = Grams of total fat per 100g (maximum value of 50)
+How to use the formula:
+Input values: You need to input the nutritional values for a food product:
+
+CAL (calories per 100g)
+PR (protein per 100g)
+DF (dietary fiber per 100g)
+TF (total fat per 100g)
+Substitute the values into the formula: For example, let’s say you have a food with the following nutritional values:
+
+CAL = 100
+PR = 10
+DF = 5
+TF = 10
+The formula would then become:
+
+𝐹𝐹=MAX(0.5,MIN(5.0,41.7/1000.7+0.05×10+6.17×10−4×53−7.25×10−6×103+0.617))
+FF=MAX(0.5,MIN(5.0,41.7/1000.7+0.05×10+6.17×10−4×53−7.25×10−6×103+0.617))
+
+Calculate the terms in the formula:
+
+10
+0
+0.7
+=
+25.12
+100
+0.7
+ =25.12
+41.7
+/
+25.12
+≈
+1.66
+41.7/25.12≈1.66
+0.05
+×
+10
+=
+0.5
+0.05×10=0.5
+6.17
+×
+1
+0
+−
+4
+×
+5
+3
+=
+6.17
+×
+1
+0
+−
+4
+×
+125
+=
+0.077125
+6.17×10
+−4
+ ×5
+3
+ =6.17×10
+−4
+ ×125=0.077125
+−
+7.25
+×
+1
+0
+−
+6
+×
+1
+0
+3
+=
+−
+0.00725
+−7.25×10
+−6
+ ×10
+3
+ =−0.00725
+Add 0.617
+Now combine these results:
+
+𝐹
+𝐹
+=
+MAX
+(
+0.5
+,
+MIN
+(
+5.0
+,
+1.66
++
+0.5
++
+0.077125
+−
+0.00725
++
+0.617
+)
+)
+FF=MAX(0.5,MIN(5.0,1.66+0.5+0.077125−0.00725+0.617))
+Simplifying:
+
+𝐹
+𝐹
+=
+MAX
+(
+0.5
+,
+MIN
+(
+5.0
+,
+2.846875
+)
+)
+FF=MAX(0.5,MIN(5.0,2.846875))
+So, FF = 2.846875.
+
+Final adjustment with MAX and MIN functions:
+
+The MIN function ensures that the result is capped at 5.0, and the MAX function ensures that the result is at least 0.5.
+In this case, 2.846875 is between 0.5 and 5.0, so the FF is simply 2.846875.
+Interpreting FF:
+FF represents how filling or satisfying the food is likely to be based on its composition.
+A higher FF indicates a food is more likely to make you feel full.
+A lower FF indicates the food may not be as filling.
+The range of FF is between 0.5 and 5.0, where 0.5 is the minimum value (low fullness) and 5.0 is the maximum value (high fullness).
+Example 1:
+If CAL = 50, PR = 5, DF = 3, and TF = 10, you would follow the same process to get the Fullness Factor.
+
+Conclusion:
+This formula is a method to quantify fullness based on certain nutritional factors. By plugging in the nutritional content of a specific food item (calories, protein, fiber, and fat), you can calculate a "Fullness Factor" that tells you how likely the food is to make you feel full or satisfied.
+
+
+
+public class FullnessFactorCalculator {
+
+    // Method to calculate the Fullness Factor (FF)
+    public static double calculateFullnessFactor(double calories, double protein, double fiber, double fat) {
+        // Calculate each part of the formula
+        double term1 = 41.7 / Math.pow(calories, 0.7);
+        double term2 = 0.05 * protein;
+        double term3 = 6.17E-4 * Math.pow(fiber, 3); //6.17E-4 = 6.17 * 10 i minus 4 potens
+        double term4 = -7.25E-6 * Math.pow(fat, 3);
+        double term5 = 0.617;
+
+        // Sum the terms
+        double fullnessFactor = term1 + term2 + term3 + term4 + term5;
+
+        // Apply the MIN and MAX functions to ensure FF is within the bounds of 0.5 and 5.0
+        fullnessFactor = Math.max(0.5, Math.min(5.0, fullnessFactor));
+
+        return fullnessFactor;
+    }
+
+    public static void main(String[] args) {
+        // Example input values
+        double calories = 100;    // CAL (Calories per 100g)
+        double protein = 10;      // PR (Protein per 100g)
+        double fiber = 5;         // DF (Dietary Fiber per 100g)
+        double fat = 10;          // TF (Total Fat per 100g)
+
+        // Calculate Fullness Factor (FF)
+        double fullnessFactor = calculateFullnessFactor(calories, protein, fiber, fat);
+
+        // Output the result
+        System.out.println("Fullness Factor (FF): " + fullnessFactor);
+    }
+}

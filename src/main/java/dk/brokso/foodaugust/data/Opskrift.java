@@ -91,17 +91,17 @@ public class Opskrift {
     public String toAsciiTable() {
         AsciiTable table = new AsciiTable();
         table.addRule();
-        table.addRow("Id", "Navn", "Valgt Vægt (g)", "Kalorier", "Protein (g)", "Kulhydrat (g)", "Fedt (g)", "Fiber (g)");
+        table.addRow("Id", "Navn", "Valgt Vægt (g)", "Kalorier", "Protein (g)", "Kulhydrat (g)", "Fedt (g)", "Fiber (g)", "Fullness");
         table.addRule();
 
         for (Food food : valgtmad) {
-            table.addRow(food.getId(), food.getName(), food.getGram(), food.getTotalCalories(), food.getGramProtein(), food.getGramCarbonhydrates(), food.getGramFat(), food.getGramDietaryfibre());
+            table.addRow(food.getId(), food.getName(), food.getGram(), food.getTotalCalories(), food.getGramProtein(), food.getGramCarbonhydrates(), food.getGramFat(), food.getGramDietaryfibre(), food.getFullnessFactor());
             table.addRule();
         }
 
-        table.addRow("Ialt", "", this.opskriftTotalGramValgt, this.opskriftTotalKcal, this.opskriftTotalProtein, this.opskriftTotalCarbonhydrates, this.opskriftTotalFat, this.opskriftTotalDietaryfibre);
+        table.addRow("Ialt", "", this.opskriftTotalGramValgt, this.opskriftTotalKcal, this.opskriftTotalProtein, this.opskriftTotalCarbonhydrates, this.opskriftTotalFat, this.opskriftTotalDietaryfibre, "");
         table.addRule();
-        table.addRow("%", "", "", "", this.opskriftPercentageProtein, this.opskriftPercentageCarbonhydrates, this.opskriftPercentageFat, "");
+        table.addRow("%", "", "", "", this.opskriftPercentageProtein, this.opskriftPercentageCarbonhydrates, this.opskriftPercentageFat, "", "");
         table.addRule();
 
         table.getRenderer().setCWC(new CWC_LongestLine());
@@ -139,24 +139,5 @@ public class Opskrift {
         return table.render();
 
     }
-
-//
-//    // Method to calculate the Fullness Factor (FF)
-//    public static double calculateFullnessFactor(double kiloKalorierpr100Gr, double proteinPr100Gr, double dietaryfibrePr100Gr, double fatPr100Gr) {
-//        // Calculate each part of the formula
-//        double term1 = 41.7 / Math.pow(kiloKalorierpr100Gr, 0.7);
-//        double term2 = 0.05 * proteinPr100Gr;
-//        double term3 = 6.17E-4 * Math.pow(dietaryfibrePr100Gr, 3); //6.17E-4 = 6.17 * 10 i minus 4 potens
-//        double term4 = -7.25E-6 * Math.pow(fatPr100Gr, 3);
-//        double term5 = 0.617;
-//
-//        // Sum the terms
-//        double fullnessFactor = term1 + term2 + term3 + term4 + term5;
-//
-//        // Apply the MIN and MAX functions to ensure FF is within the bounds of 0.5 and 5.0
-//        fullnessFactor = Math.max(0.5, Math.min(5.0, fullnessFactor));
-//
-//        return fullnessFactor;
-//    }
 
 }

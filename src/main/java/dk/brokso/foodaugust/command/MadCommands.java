@@ -153,10 +153,10 @@ public class MadCommands implements Loggable {
     @ShellMethod("justertil")
     public void justertil(String antalKcal) {
 
-        int onsketAntalKcal = 0;
+        double onsketAntalKcal = 0;
 
         try {
-            onsketAntalKcal = Integer.parseInt(antalKcal);
+            onsketAntalKcal = Double.parseDouble(antalKcal);
             System.out.println(String.format("Onsket antal kcal: %s", onsketAntalKcal));
         } catch (NumberFormatException e) {
             System.out.println(String.format("Det indtastede tal er ikke validt %s", onsketAntalKcal));

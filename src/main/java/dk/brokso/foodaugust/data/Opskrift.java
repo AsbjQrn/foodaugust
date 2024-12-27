@@ -91,17 +91,17 @@ public class Opskrift {
     public String toAsciiTable() {
         AsciiTable table = new AsciiTable();
         table.addRule();
-        table.addRow("Id", "Navn", "Valgt Vægt (g)", "Kalorier", "Protein (g)", "Kulhydrat (g)", "Fedt (g)", "Fiber (g)", "Fullness");
+        table.addRow("Id", "Navn", "Valgt Vægt (g)", "Kalorier", "Protein (g)", "Kulhydrat (g)", "Fedt (g)", "Fiber (g)", "Fullness", "Kaloriedensitet kcal/gram");
         table.addRule();
 
         for (Food food : valgtmad) {
-            table.addRow(food.getId(), food.getName(), food.getGram(), food.getTotalCalories(), food.getGramProtein(), food.getGramCarbonhydrates(), food.getGramFat(), food.getGramDietaryfibre(), food.getFullnessFactor());
+            table.addRow(food.getId(), food.getName(), food.getGram(), food.getTotalCalories(), food.getGramProtein(), food.getGramCarbonhydrates(), food.getGramFat(), food.getGramDietaryfibre(), food.getFullnessFactor(), food.getTotalCalories()/food.getGram());
             table.addRule();
         }
 
-        table.addRow("Ialt", "", this.opskriftTotalGramValgt, this.opskriftTotalKcal, this.opskriftTotalProtein, this.opskriftTotalCarbonhydrates, this.opskriftTotalFat, this.opskriftTotalDietaryfibre, "");
+        table.addRow("Ialt", "", this.opskriftTotalGramValgt, this.opskriftTotalKcal, this.opskriftTotalProtein, this.opskriftTotalCarbonhydrates, this.opskriftTotalFat, this.opskriftTotalDietaryfibre, Calculator.calculateFullnessFactor(opskriftKiloKalorierpr100Gr, opskriftProteinPr100Gr, opskriftDietaryfibrePr100Gr, opskriftFatPr100Gr), this.opskriftTotalKcal / this.opskriftTotalGramValgt);
         table.addRule();
-        table.addRow("%", "", "", "", this.opskriftPercentageProtein, this.opskriftPercentageCarbonhydrates, this.opskriftPercentageFat, "", "");
+        table.addRow("%", "", "", "", this.opskriftPercentageProtein, this.opskriftPercentageCarbonhydrates, this.opskriftPercentageFat, "", "", "");
         table.addRule();
 
         table.getRenderer().setCWC(new CWC_LongestLine());
@@ -110,34 +110,4 @@ public class Opskrift {
     }
 
 
-    /**
-     * Beregning af mæthedstal
-     * <p>
-     * <p>
-     * 100 gram HAVREGRYN,  som indeholder: 366 kcal, 13 gram protein, 68 gram kulhydrat, 7 gram fedt, 10 gram fiber
-     * mæthedstal = 366 kcal / 100 gram * (13 gram protein + (10 gram fiber * 2) - 7 gram fedt) = 95
-     * <p>
-     * <p>
-     * <p>
-     * 100 gram MØRK CHOKOLADE som indeholder: 549 kcal, 4,3 gram protein, 32 gram kulhydrat, 32 gram fedt, 1 gram fiber
-     * mæthedstal = 549 kcal / 100 gram * (4  gram protein + (1 gram fiber * 2) - 32 gram fedt) = -143
-     * <p>
-     * i opskriftformlen regnes der alid på 100 gram af opskriften - derfor divideres med 100 hist og pist
-     */
-    public String toMaethedsAsciiTable() {
-
-        double kaloriedensitet = this.opskriftTotalKcal / this.opskriftTotalGramValgt;
-
-        AsciiTable table = new AsciiTable();
-        table.addRule();
-        table.addRow("Kaloriedensitet kcal/gram", "slanketal");
-        table.addRow(kaloriedensitet, Calculator.calculateFullnessFactor(opskriftKiloKalorierpr100Gr, opskriftProteinPr100Gr, opskriftDietaryfibrePr100Gr, opskriftFatPr100Gr));
-        table.addRule();
-
-        table.getRenderer().setCWC(new CWC_LongestLine());
-
-        return table.render();
-
-    }
-
-}
+   }

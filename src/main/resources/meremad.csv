@@ -1,3 +1,4 @@
-,navn,kalorier,protein,kulhydrat,fiber,fedt
-"Kokosmælk light",68,"0,5",1,0,6
-
+,alle mål pr 100 gram
+,navn            , kalorier, protein, kulhydrat,   fiber, fedt
+"Kokosmælk light",       68,   "0,5",         1,       0,    6
+"loppefrø psyllium",    189,   "2,4",     "1,7",  "83,7", "0,6"

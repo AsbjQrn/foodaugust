@@ -124,7 +124,6 @@ public class MadCommands implements Loggable {
         Opskrift opskrift = new Opskrift(valgtMadMap.values().stream().toList());
 
         System.out.println(opskrift.toAsciiTable());
-        System.out.println(opskrift.toMaethedsAsciiTable());
 
     }
 
@@ -267,15 +266,27 @@ public class MadCommands implements Loggable {
         return foodsAsTable(MakroType.FIBRE);
     }
 
+    @ShellMethod("fibreprkcal")
+    public String fibreprkcal() {
+
+
+        System.out.println("Der vises fibre pr kalorie");
+        Collections.sort(foods, (o1, o2) -> {
+            return Double.compare(o2.getDietaryfibreIn100gram()/o2.getKcalIn100Gram(), o1.getDietaryfibreIn100gram()/o1.getKcalIn100Gram()); // Descending order
+        });
+
+        return foodsAsTable(MakroType.FIBRE);
+    }
+
     private String foodsAsTable(MakroType type) {
         AsciiTable table = new AsciiTable();
         table.addRule();
-        table.addRow("Id", "Navn", "Kalorier", "Protein (g)", "Kulhydrat (g)", "Fedt (g)", "Fiber (g)", "Fullness");
+        table.addRow("Id", "Navn", "Kalorier", "Protein (g)", "Kulhydrat (g)", "Fedt (g)", "Fiber (g)", "Fullness", "Kaloriedensitet kcal/gram");
         table.addRule();
 
         for (Food food : foods) {
             if (MakroType.FIBRE == type && food.getDietaryfibreIn100gram() > 0 || MakroType.PROTEIN == type && food.getProteinIn100Gram() > 0) {
-                table.addRow(food.getId(), food.getName(), food.getKcalIn100Gram(), food.getProteinIn100Gram(), food.getCarbonhydratesIn100Gram(), food.getFatIn100Gram(), food.getDietaryfibreIn100gram(), food.getFullnessFactor());
+                table.addRow(food.getId(), food.getName(), food.getKcalIn100Gram(), food.getProteinIn100Gram(), food.getCarbonhydratesIn100Gram(), food.getFatIn100Gram(), food.getDietaryfibreIn100gram(), food.getFullnessFactor(), food.getKcalIn100Gram()/100);
             } else {
                 continue;
             }

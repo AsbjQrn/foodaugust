@@ -3,15 +3,19 @@ package dk.brokso.foodaugust.data;
 import de.vandermeer.asciitable.AsciiTable;
 import de.vandermeer.asciitable.CWC_LongestLine;
 import dk.brokso.foodaugust.util.Calculator;
+import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @Getter
+@Setter
 public class Opskrift {
 
 
     private final List<Food> valgtmad;
+    private String navn;
     private double opskriftTotalKcal = 0d;
     private double opskriftTotalProtein = 0d;
     private double opskriftTotalFat = 0d;
@@ -95,13 +99,13 @@ public class Opskrift {
         table.addRule();
 
         for (Food food : valgtmad) {
-            table.addRow(food.getId(), food.getName(), food.getGram(), food.getTotalCalories(), food.getGramProtein(), food.getGramCarbonhydrates(), food.getGramFat(), food.getGramDietaryfibre(), food.getFullnessFactor(), food.getTotalCalories()/food.getGram());
+            table.addRow(food.getId(), food.getName(), (int) food.getGram(), (int) food.getTotalCalories(), (int) food.getGramProtein(), (int) food.getGramCarbonhydrates(), (int) food.getGramFat(), (int) food.getGramDietaryfibre(), food.getFullnessFactor(), (int)  food.getTotalCalories()/food.getGram());
             table.addRule();
         }
 
         table.addRow("Ialt", "", this.opskriftTotalGramValgt, this.opskriftTotalKcal, this.opskriftTotalProtein, this.opskriftTotalCarbonhydrates, this.opskriftTotalFat, this.opskriftTotalDietaryfibre, Calculator.calculateFullnessFactor(opskriftKiloKalorierpr100Gr, opskriftProteinPr100Gr, opskriftDietaryfibrePr100Gr, opskriftFatPr100Gr), this.opskriftTotalKcal / this.opskriftTotalGramValgt);
         table.addRule();
-        table.addRow("%", "", "", "", this.opskriftPercentageProtein, this.opskriftPercentageCarbonhydrates, this.opskriftPercentageFat, "", "", "");
+        table.addRow("%", "", "", "", String.format("%.2f", this.opskriftPercentageProtein), String.format("%.2f", this.opskriftPercentageCarbonhydrates), String.format("%.2f", this.opskriftPercentageFat), "", "", "");
         table.addRule();
 
         table.getRenderer().setCWC(new CWC_LongestLine());

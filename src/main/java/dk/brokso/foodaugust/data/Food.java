@@ -20,8 +20,8 @@ public class Food {
     private double carbonhydratesIn100Gram;
     private double dietaryfibreIn100gram;
     private double fullnessFactor;
-    private int gram;
-    private int makronaeringVaegt;
+    private double gram;
+    private double makronaeringVaegt;
 
     public Food(){}
 

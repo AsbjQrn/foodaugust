@@ -7,6 +7,7 @@ import de.vandermeer.asciitable.AsciiTable;
 import de.vandermeer.asciitable.CWC_LongestLine;
 import dk.brokso.foodaugust.data.Food;
 import dk.brokso.foodaugust.data.Opskrift;
+import dk.brokso.foodaugust.data.OpskriftWriter;
 import dk.brokso.foodaugust.util.Loggable;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -36,21 +37,20 @@ public class MadCommands implements Loggable {
     @ShellMethod("find")
     public String find(String ord) {
 
-        StringBuilder builder = new StringBuilder();
-
+        List<Food> foundFoods = new ArrayList<>();
         for (Food food : foods) {
 
             if (food.getName().toUpperCase().contains(ord.toUpperCase())) {
-                builder.append(food.getId());
-                builder.append(" ");
-                builder.append(food.getName());
-                builder.append("\n");
-
+                foundFoods.add(food);
             }
 
         }
-        return builder.toString();
 
+        Collections.sort(foundFoods, (o1, o2) -> {
+            return Double.compare(o2.getFullnessFactor(), o1.getFullnessFactor()); // Descending order
+        });
+
+        return foodsAsTable(foundFoods);
     }
 
     @ShellMethod("valg")
@@ -58,11 +58,11 @@ public class MadCommands implements Loggable {
 
 
         int valgtId;
-        int gram;
+        double gram;
 
         try {
             valgtId = Integer.parseInt(userValg);
-            gram = Integer.parseInt(userGram);
+            gram = Double.parseDouble(userGram);
         } catch (NumberFormatException e) {
             System.out.println(String.format("%1s er ikke gyldig", userValg));
             return;
@@ -149,6 +149,17 @@ public class MadCommands implements Loggable {
 
     }
 
+    @ShellMethod("skriv")
+    public void skriv(String opskriftnavn) {
+
+
+        Opskrift opskrift = new Opskrift(valgtMadMap.values().stream().toList());
+        opskrift.setNavn(opskriftnavn);
+
+        OpskriftWriter.writeOpskrift(opskrift);
+
+    }
+
     @ShellMethod("justertil")
     public void justertil(String antalKcal) {
 
@@ -176,7 +187,7 @@ public class MadCommands implements Loggable {
 
                 food -> {
                     System.out.println(String.format("%s gram før %s", food.getName(), food.getGram()));
-                    food.setGram((int) (food.getGram() * justeringsfactor));
+                    food.setGram(food.getGram() * justeringsfactor);
                     System.out.println(String.format("%s gram efter %s", food.getName(), food.getGram()));
                 });
 
@@ -225,7 +236,7 @@ public class MadCommands implements Loggable {
             return Double.compare(o2.getFullnessFactor(), o1.getFullnessFactor()); // Descending order
         });
 
-        return foodsAsTable(MakroType.PROTEIN);
+        return foodsAsTable(this.foods);
     }
 
     @ShellMethod("protein")
@@ -236,24 +247,9 @@ public class MadCommands implements Loggable {
             return Double.compare(o2.getProteinIn100Gram(), o1.getProteinIn100Gram()); // Descending order
         });
 
-        return foodsAsTable(MakroType.PROTEIN);
+        return foodsAsTable(this.foods);
     }
 
-    @ShellMethod("ny")
-    public String ny() {
-        Scanner scanner = new Scanner(System.in);
-        Food food = new Food();
-
-
-        System.out.println("Indtast navn");
-        food.setName(scanner.nextLine());
-
-        System.out.println("Indtast kcal pr 1000 gram");
-        food.setKcalIn100Gram(Integer.parseInt(scanner.nextLine()));
-
-        return food.toString();
-
-    }
 
     @ShellMethod("fibre")
     public String fibre() {
@@ -263,7 +259,7 @@ public class MadCommands implements Loggable {
             return Double.compare(o2.getDietaryfibreIn100gram(), o1.getDietaryfibreIn100gram()); // Descending order
         });
 
-        return foodsAsTable(MakroType.FIBRE);
+        return foodsAsTable(foods);
     }
 
     @ShellMethod("fibreprkcal")
@@ -275,21 +271,21 @@ public class MadCommands implements Loggable {
             return Double.compare(o2.getDietaryfibreIn100gram()/o2.getKcalIn100Gram(), o1.getDietaryfibreIn100gram()/o1.getKcalIn100Gram()); // Descending order
         });
 
-        return foodsAsTable(MakroType.FIBRE);
+        return foodsAsTable(this.foods);
     }
 
-    private String foodsAsTable(MakroType type) {
+    private String foodsAsTable(List<Food> foods) {
         AsciiTable table = new AsciiTable();
         table.addRule();
-        table.addRow("Id", "Navn", "Kalorier", "Protein (g)", "Kulhydrat (g)", "Fedt (g)", "Fiber (g)", "Fullness", "Kaloriedensitet kcal/gram");
+        table.addRow("[%center]Id", "Navn", "Kalorier", "Protein (g)", "Kulhydrat (g)", "Fedt (g)", "Fiber (g)", "Fullness", "Kaloriedensitet kcal/gram");
         table.addRule();
 
         for (Food food : foods) {
-            if (MakroType.FIBRE == type && food.getDietaryfibreIn100gram() > 0 || MakroType.PROTEIN == type && food.getProteinIn100Gram() > 0) {
-                table.addRow(food.getId(), food.getName(), food.getKcalIn100Gram(), food.getProteinIn100Gram(), food.getCarbonhydratesIn100Gram(), food.getFatIn100Gram(), food.getDietaryfibreIn100gram(), food.getFullnessFactor(), food.getKcalIn100Gram()/100);
-            } else {
-                continue;
-            }
+//            if (MakroType.FIBRE == type && food.getDietaryfibreIn100gram() > 0 || MakroType.PROTEIN == type && food.getProteinIn100Gram() > 0) {
+                table.addRow((int) food.getId(), food.getName(), (int) food.getKcalIn100Gram(), (int) food.getProteinIn100Gram(), (int) food.getCarbonhydratesIn100Gram(), (int) food.getFatIn100Gram(), (int) food.getDietaryfibreIn100gram(), String.format("%.2f",food.getFullnessFactor()), food.getKcalIn100Gram()/100);
+//            } else {
+//                continue;
+//            }
             table.addRule();
         }
         table.getRenderer().setCWC(new CWC_LongestLine());

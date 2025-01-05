@@ -1,6 +1,8 @@
-# Navn: forsog
-|Navn                                                    |    Gram    |    Id    | 
-|:-------------------------------------------------------|:----------:|:--------:| 
-|Mungbønner, tørrede, rå|100|50
-|Edamamebønner (Sojabønner), pillede, frosne|100|1240
-|Baked beans (hvide bønner i tomatsauce)|100|1242
+forsog
+
+| Id | Navn                                                    |Vægt (g)|Kalorier|Protein (g)|Kulhydrat (g)|Fedt (g)|Fiber (g)|Fullness|Kaloriedensitet kcal/gram|
+|:--:|:--------------------------------------------------------|:------:|:------:|:---------:|:-----------:|:------:|:-------:|:------:|:-----------------------:|
+|380|Gulerod, dansk, rå|400|116|1|32|0|10|4.590370774067772|0.29
+Ialt||400.0|116.0|1.20|32.80|0.40|10.00|4.59|0.29
+%||||3.49|95.35|1.16|||
+

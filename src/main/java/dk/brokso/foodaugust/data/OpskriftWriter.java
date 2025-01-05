@@ -11,12 +11,11 @@ public class OpskriftWriter {
     public static void writeOpskrift(Opskrift opskrift) {
 
         try {
-            Files.write(Paths.get(opskrift.getNavn() + ".md"), OpskriftFormatter.formatOpskrift(opskrift));
+            Files.write(Paths.get(opskrift.getNavn() + ".md"), OpskriftFormatter.toMarkdown(opskrift));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
         }
-        ;
 
     }
 

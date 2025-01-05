@@ -7,6 +7,7 @@ import de.vandermeer.asciitable.AsciiTable;
 import de.vandermeer.asciitable.CWC_LongestLine;
 import dk.brokso.foodaugust.data.Food;
 import dk.brokso.foodaugust.data.Opskrift;
+import dk.brokso.foodaugust.data.OpskriftFormatter;
 import dk.brokso.foodaugust.data.OpskriftWriter;
 import dk.brokso.foodaugust.util.Loggable;
 import org.springframework.shell.standard.ShellComponent;
@@ -123,7 +124,7 @@ public class MadCommands implements Loggable {
 
         Opskrift opskrift = new Opskrift(valgtMadMap.values().stream().toList());
 
-        System.out.println(opskrift.toAsciiTable());
+        System.out.println(OpskriftFormatter.toAsciiTableForConsole(opskrift));
 
     }
 
@@ -145,7 +146,7 @@ public class MadCommands implements Loggable {
             System.exit(5);
         }
 
-        System.out.println(opskrift.toAsciiTable());
+        System.out.println(OpskriftFormatter.toAsciiTableForConsole(opskrift));
 
     }
 
@@ -277,15 +278,11 @@ public class MadCommands implements Loggable {
     private String foodsAsTable(List<Food> foods) {
         AsciiTable table = new AsciiTable();
         table.addRule();
-        table.addRow("[%center]Id", "Navn", "Kalorier", "Protein (g)", "Kulhydrat (g)", "Fedt (g)", "Fiber (g)", "Fullness", "Kaloriedensitet kcal/gram");
+        table.addRow("Id", "Navn", "Kalorier", "Protein (g)", "Kulhydrat (g)", "Fedt (g)", "Fiber (g)", "Fullness", "Kaloriedensitet kcal/gram");
         table.addRule();
 
         for (Food food : foods) {
-//            if (MakroType.FIBRE == type && food.getDietaryfibreIn100gram() > 0 || MakroType.PROTEIN == type && food.getProteinIn100Gram() > 0) {
                 table.addRow((int) food.getId(), food.getName(), (int) food.getKcalIn100Gram(), (int) food.getProteinIn100Gram(), (int) food.getCarbonhydratesIn100Gram(), (int) food.getFatIn100Gram(), (int) food.getDietaryfibreIn100gram(), String.format("%.2f",food.getFullnessFactor()), food.getKcalIn100Gram()/100);
-//            } else {
-//                continue;
-//            }
             table.addRule();
         }
         table.getRenderer().setCWC(new CWC_LongestLine());
